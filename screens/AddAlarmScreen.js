@@ -1,10 +1,17 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, TextInput} from 'react-native';
+import { StyleSheet, 
+        Text, 
+        View, 
+        TextInput, 
+        ScrollView, 
+        Picker,
+        TouchableOpacity} from 'react-native';
 import { set } from 'react-native-reanimated';
 
 
 const AddAlarmScreen = props => {
 
+    //Tratamento do campo Horario do Lembrete
     var current_hour = new Date().getHours();
     var string_current_hour = '';
     if(current_hour < 10)
@@ -67,60 +74,168 @@ const AddAlarmScreen = props => {
             setMEnteredGoal(aux);
         }
     }
+
+    //Tratamento campo Nome do Lembrete
+    const [enteredNameReminder, setNameReminder] = useState('Beber Água');
+
+    const inputNameReminderHandle = (enteredText) => {
+        setNameReminder(enteredText);
+    }
+
+    //Tratamento campo Tipo do Lembrete
+    const [selectedType, setSelectedType] = useState('agua');
+
+    //Tratamento campo Repetir a cada
+    const [enteredHourRepeatGoal, setHRepeatEnteredGoal] = useState('01');
+    const [enteredMinRepeatGoal, setMRepeatEnteredGoal] = useState('00');
+
+    const inputHourRepeatHandle = (enteredText) => {
+        
+        if (enteredText.length == 0) 
+        {
+           enteredText = '0' + enteredHourRepeatGoal;
+        }
+        var num = parseInt(enteredText);
+        if(num > 23)
+        {
+            enteredText = '0' + enteredText[0];
+        }
+        setHRepeatEnteredGoal(enteredText);
+    }
+
+    const inputMinRepeatHandle = (enteredText) => {
+        if (enteredText.length == 0) 
+        {
+            enteredText = '0' + enteredMinRepeatGoal;
+        }
+        var num = parseInt(enteredText);
+        if(num > 59)
+        {
+            enteredText = '0' + enteredText[0];
+        }
+        setMRepeatEnteredGoal(enteredText);
+    }
+
+    const [enteredHourRepeatSubmit, setHRepeatEnteredSubmit] = useState(enteredHourRepeatGoal);
+    const [enteredMinRepeatSubmit, setMRepeatEnteredSubmit] = useState(enteredMinRepeatGoal);
+
+    const submitHourRepeatHandle = (ObjectEvent) => {
+        
+        if(ObjectEvent.nativeEvent.text.length == 1)
+        {
+            //console.log(ObjectEvent.nativeEvent.text);
+            //console.log(enteredHourGoal);
+            aux = '0'+ObjectEvent.nativeEvent.text;
+            setHRepeatEnteredGoal(aux);
+        }
+    }
+
+    const submitMinRepeatHandle = (ObjectEvent) => {
+        
+        if(ObjectEvent.nativeEvent.text.length == 1)
+        {
+            //console.log(ObjectEvent.nativeEvent.text);
+            //console.log(enteredHourGoal);
+            aux = '0'+ObjectEvent.nativeEvent.text;
+            setMRepeatEnteredGoal(aux);
+        }
+    }
+    
+
     return (
         <View style={styles.screen}>
-            <View style={styles.header_container}>
-                <Text style={styles.header_text}>Novo Lembrete</Text>
-            </View>
-            <View style={styles.input_container}>
-                <View style={styles.text_time_container}>
-                    <Text style={styles.text_time}>
-                        Horário do Lembrete:
-                    </Text>
+            <ScrollView style={styles.scroll_style} showsVerticalScrollIndicator={false}>
+                <View style={styles.header_container}>
+                    <Text style={styles.header_text}>Novo Lembrete</Text>
                 </View>
-                <View style={styles.input_time}>
-                <TextInput
-                style={styles.hourInp}
-                keyboardType={"numeric"}
-                value={enteredHourGoal}
-                maxLength={2}
-                onChangeText={inputHourHandle}
-                onSubmitEditing = {submitHourHandle}
-                />
-                <Text style={styles.hourInp}>
-                    :
-                </Text>
-                <TextInput
-                style={styles.minInp}
-                keyboardType={"numeric"}
-                value={enteredMinGoal}
-                maxLength={2}
-                onChangeText={inputMinHandle}
-                onSubmitEditing = {submitMinHandle}
-                />
-                <Text>
-                    pm
-                </Text>
+                <View style={styles.input_container}>
+                    <View style={styles.text_time_container}>
+                        <Text style={styles.text_time}>
+                            Horário do Lembrete:
+                        </Text>
+                    </View>
+                    <View style={styles.input_time}>
+                        <TextInput
+                        style={styles.hourInp}
+                        keyboardType={"numeric"}
+                        value={enteredHourGoal}
+                        maxLength={2}
+                        onChangeText={inputHourHandle}
+                        onSubmitEditing = {submitHourHandle}
+                        />
+                        <Text style={styles.hourInp}>
+                            :
+                        </Text>
+                        <TextInput
+                        style={styles.minInp}
+                        keyboardType={"numeric"}
+                        value={enteredMinGoal}
+                        maxLength={2}
+                        onChangeText={inputMinHandle}
+                        onSubmitEditing = {submitMinHandle}
+                        />
+                        <Text>
+                            pm
+                        </Text>
+                    </View>
+                    <View style={styles.text_time_container}>
+                        <Text style={styles.text_time}>
+                            Tipo do Lembrete:
+                        </Text>
+                    </View>
+                    <View style={styles.text_input_container}>
+                        <Picker
+                        selectedValue={selectedType}
+                        style={{width: '100%'}}
+                        onValueChange={(itemValue, itemIndex) => setSelectedType(itemValue)}>
+                            <Picker.Item label="Remédio" value="remedio"/>
+                            <Picker.Item label="Água" value="agua"/>
+                        </Picker>
+                    </View>
+                    <View style={styles.text_time_container}>
+                        <Text style={styles.text_time}>
+                            Nome do Lembrete:
+                        </Text>
+                    </View>
+                    <TextInput
+                    style={styles.text_input_container}
+                    value={enteredNameReminder}
+                    onChangeText={inputNameReminderHandle}
+                    />
+                    <View style={styles.text_time_container}>
+                        <Text style={styles.text_time}>
+                            Repetir a cada:
+                        </Text>
+                    </View>
+                    <View style={styles.input_repeat_time}>
+                        <TextInput
+                        style={{fontSize: 25}}
+                        keyboardType={"numeric"}
+                        value={enteredHourRepeatGoal}
+                        maxLength={2}
+                        onChangeText={inputHourRepeatHandle}
+                        onSubmitEditing = {submitHourRepeatHandle}
+                        />
+                        <Text style={{fontSize:25}}>
+                            :
+                        </Text>
+                        <TextInput
+                        style={{fontSize: 25}}
+                        keyboardType={"numeric"}
+                        value={enteredMinRepeatGoal}
+                        maxLength={2}
+                        onChangeText={inputMinRepeatHandle}
+                        onSubmitEditing = {submitMinRepeatHandle}
+                        />
+                    </View>
+                    <View style={styles.button_container}>
+                        <TouchableOpacity onPress={() => {
+                        props.navigation.navigate({routeName: 'ListNav'});}} style={styles.button_background}>
+                            <Text style={styles.text_button}>Pronto!</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <View style={styles.text_time_container}>
-                    <Text style={styles.text_time}>
-                        Tipo do Lembrete:
-                    </Text>
-                </View>
-                <TextInput
-                style={styles.text_input_container}
-                value={'Remedio'}
-                />
-                <View style={styles.text_time_container}>
-                    <Text style={styles.text_time}>
-                        Nome do Lembrete:
-                    </Text>
-                </View>
-                <TextInput
-                style={styles.text_input_container}
-                value={'Dipirona'}
-                />
-            </View>
+            </ScrollView>
         </View>
     );
 };
@@ -132,8 +247,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    scroll_style: {
+        //backgroundColor: '#FFFF',
+        width : '100%',
+    },
     header_container: {
-        marginTop: 100,
+        marginTop: 80,
         marginBottom: 50,
         width: '80%',
         //backgroundColor: 'rgb(0,0,255)',
@@ -195,7 +314,41 @@ const styles = StyleSheet.create({
           shadowRadius: 3.84,
           elevation: 15,
           marginBottom: 50,
+          fontSize: 18,
       },
+      input_repeat_time: {
+        flexDirection: 'row',
+        backgroundColor: '#FFF',
+        padding: 10,
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,},
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 15,
+        marginBottom: 30,
+        width: 200,
+        justifyContent: "center",
+      },
+      button_container: {
+        marginBottom: 10,
+        //backgroundColor: 'rgb(255,0,0)',
+      },
+      button_background: {
+        backgroundColor: '#F69ACC',
+        paddingHorizontal: 30,
+        paddingVertical: 10,
+        borderRadius: 30,
+        elevation: 5,
+      },
+      text_button: {
+        color: '#FFF',
+        fontSize: 22,
+        fontWeight: 'bold',
+      },
+
 });
 
 export default AddAlarmScreen;
